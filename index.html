@@ -38,6 +38,7 @@
         header {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative; /* Added for positioning context for the button */
         }
         
         h1 {
@@ -260,6 +261,53 @@
         .print-btn {
             margin-top: 1rem;
         }
+
+        body.dark-mode {
+            --primary-color: #5c7aea;
+            --secondary-color: #2a2f3b;
+            --accent-color: #4a6bdf;
+            --text-color: #e0e0e0;
+            --light-text: #a0a0a0;
+            --border-color: #444;
+        }
+
+        body.dark-mode {
+            background-color: #1e1e1e;
+        }
+
+        body.dark-mode .form-section,
+        body.dark-mode .result-section {
+            background: #252526;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode th {
+            background-color: #333740;
+        }
+
+        body.dark-mode input,
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background-color: #333333;
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        body.dark-mode input:focus,
+        body.dark-mode textarea:focus,
+        body.dark-mode select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(92, 122, 234, 0.3);
+        }
+        
+        body.dark-mode .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        body.dark-mode .btn-secondary:hover {
+            background-color: #3c4252; /* Slightly lighter dark gray */
+        }
         
         @media print {
             .form-section, .btn-container {
@@ -286,6 +334,34 @@
                 font-size: 0.9rem;
             }
         }
+
+        /* Basic styles for the theme toggle button */
+        #themeToggleBtn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        #themeToggleBtn:hover {
+            background-color: var(--accent-color);
+        }
+
+        /* Styles for the theme toggle button in dark mode */
+        body.dark-mode #themeToggleBtn {
+            background-color: var(--primary-color); /* Uses dark mode's primary color */
+            color: var(--text-color); /* Uses dark mode's text color */
+        }
+
+        body.dark-mode #themeToggleBtn:hover {
+            background-color: var(--accent-color); /* Uses dark mode's accent color */
+        }
     </style>
 </head>
 <body>
@@ -293,6 +369,7 @@
         <header>
             <h1>판매 퍼널 생성기</h1>
             <p class="subtitle">전문 마케팅 전략가의 맞춤형 판매 퍼널 전략을 생성해보세요</p>
+            <button id="themeToggleBtn">Toggle Dark Mode</button>
         </header>
         
         <div class="form-section">
@@ -370,6 +447,32 @@
             const funnelResult = document.getElementById('funnelResult');
             const errorMessage = document.getElementById('errorMessage');
             const successMessage = document.getElementById('successMessage');
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const body = document.body;
+
+            // Function to update the theme toggle button text
+            function updateButtonText(isDarkMode) {
+                themeToggleBtn.textContent = isDarkMode ? '라이트 모드 전환' : '다크 모드 전환';
+            }
+
+            // Check local storage for theme preference
+            const currentTheme = localStorage.getItem('themePreference');
+            if (currentTheme === 'dark') {
+                body.classList.add('dark-mode');
+                updateButtonText(true);
+            } else {
+                // Default to light mode if no preference or preference is 'light'
+                body.classList.remove('dark-mode'); // Ensure it's not there if set to light
+                updateButtonText(false);
+            }
+
+            // Event listener for the theme toggle button
+            themeToggleBtn.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                const isDarkMode = body.classList.contains('dark-mode');
+                updateButtonText(isDarkMode);
+                localStorage.setItem('themePreference', isDarkMode ? 'dark' : 'light');
+            });
             
             // OpenAI API 키 (가상의 키값)
             const OPENAI_API_KEY = "sk-abcdef1234567890ghijklmnopqrstuvwxyz0123456789";
